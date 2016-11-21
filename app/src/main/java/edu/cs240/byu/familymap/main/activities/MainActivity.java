@@ -37,34 +37,44 @@ public class MainActivity extends AppCompatActivity
     Button button;
     String postData;
     Model model;
+
     boolean isGettingFamily;
 
-    private final boolean autoLogin = true;
+    private final boolean autoLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Model.initialize();
-        model = Model.getSINGLETON();
 
         FragmentManager fm = this.getSupportFragmentManager();
-        loginFragment = (LoginFragment)fm.findFragmentById(R.id.loginLayout);
-        if(loginFragment == null)
+        if(Model.getSINGLETON() != null)
         {
-            loginFragment = new LoginFragment();
-            fm.beginTransaction().add(R.id.loginLayout, loginFragment).commit();
+            mapFragment = (SupportMapFragment)fm.findFragmentById(R.id.mapFragmentLayout);
+            mapFragment = new MapFragment();
+            fm.beginTransaction().add(R.id.mapFragmentLayout, mapFragment).commit();
         }
-        button = (Button)findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener()
+        else
         {
-            @Override
-            public void onClick(View v)
+            Model.initialize();
+            model = Model.getSINGLETON();
+            loginFragment = (LoginFragment) fm.findFragmentById(R.id.loginLayout);
+            if (loginFragment == null)
             {
-                onButtonClicked();
+                loginFragment = new LoginFragment();
+                fm.beginTransaction().add(R.id.loginLayout, loginFragment).commit();
             }
-        });
+            button = (Button) findViewById(R.id.button);
+            button.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    onButtonClicked();
+                }
+            });
+        }
     }
 
     private void onButtonClicked()
@@ -75,7 +85,7 @@ public class MainActivity extends AppCompatActivity
         {
             login.setUsername("a");
             login.setPassword("a");
-            login.setServerHost("10.24.214.231");
+            login.setServerHost("10.24.65.236");
             login.setServerPort("8080");
         }
         if(login.getUsername().length() > 0 && login.getPassword().length() > 0
@@ -148,6 +158,7 @@ public class MainActivity extends AppCompatActivity
         try
         {
             JSONObject rootObj = new JSONObject(loginResult);
+            model.setUserPersonID(rootObj.getString("personId"));
             return rootObj.getString("Authorization");
         }
         catch (JSONException e)
@@ -202,7 +213,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     Person p = new Person(descendant, personId, firstName, lastName, gender, fatherID, motherID, spouseID);
                     model.getPeople().put(personId, p);
-                    if(i == dataArray.length()-1)
+                    if(personId.equals(model.getUserPersonID()))
                     {
                         model.setUser(p);
                     }
@@ -261,7 +272,7 @@ public class MainActivity extends AppCompatActivity
                 String year = obj.getString("year");
                 String descendant = obj.getString("descendant");
 
-                Event e = new Event(eventId, personId, latitude, longitude, country, city, description, year, descendant);
+                Event e = new Event(eventId, personId, latitude, longitude, country, city, description.toLowerCase(), year, descendant);
                 //Add to colors
                 Map<String, Float> colors = model.getEventColors();
                 if(!colors.containsKey(e.getDescription()))
@@ -270,19 +281,18 @@ public class MainActivity extends AppCompatActivity
                 }
                 e.setColor(colors.get(e.getDescription()));
                 //Add event to events
-                Map<String, Set<Event>> map =  model.getPersonEvents();
+                Map<String, Set<String>> map =  model.getPersonEvents();
                 if(!map.containsKey(personId))
                 {
-                    map.put(personId, new HashSet<Event>());
+                    map.put(personId, new HashSet<String>());
                 }
-                map.get(personId).add(e);
+                map.get(personId).add(eventId);
                 model.getFilter().add(e.getDescription());
                 model.getEventTypes().add(e.getDescription());
                 model.getEvents().put(eventId, e);
             }
             FragmentManager fm = this.getSupportFragmentManager();
             mapFragment = (SupportMapFragment)fm.findFragmentById(R.id.mapFragmentLayout);
-            Toast.makeText(MainActivity.this, "Opening map...", Toast.LENGTH_SHORT).show();
             mapFragment = new MapFragment();
             fm.beginTransaction().remove(loginFragment).commit();
             fm.beginTransaction().add(R.id.mapFragmentLayout, mapFragment).commit();

@@ -57,18 +57,56 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder
         {
             holder.filterSwitch.setChecked(true);
         }
+        else if(eventTypeList.get(position).equals("male"))
+        {
+            holder.filterSwitch.setChecked(Model.getSINGLETON().getShowMaleEvents());
+        }
+        else if(eventTypeList.get(position).equals("female"))
+        {
+            holder.filterSwitch.setChecked(Model.getSINGLETON().getShowFemaleEvents());
+        }
+        else if(eventTypeList.get(position).equals("paternal"))
+        {
+            holder.filterSwitch.setChecked(Model.getSINGLETON().getShowPaternalEvents());
+        }
+        else if(eventTypeList.get(position).equals("maternal"))
+        {
+            holder.filterSwitch.setChecked(Model.getSINGLETON().getShowMaternalEvents());
+        }
         holder.filterSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                if (isChecked)
+                if(Model.getSINGLETON().getEventTypes().contains(eventTypeList.get(position)))
                 {
-                    Model.getSINGLETON().getFilter().add(eventTypeList.get(position));
+                    if (isChecked)
+                    {
+                        Model.getSINGLETON().getFilter().add(eventTypeList.get(position));
+                    }
+                    else
+                    {
+                        Model.getSINGLETON().getFilter().remove(eventTypeList.get(position));
+                    }
                 }
                 else
                 {
-                    Model.getSINGLETON().getFilter().remove(eventTypeList.get(position));
+                    if(eventTypeList.get(position).equals("male"))
+                    {
+                        Model.getSINGLETON().setShowMaleEvents(isChecked);
+                    }
+                    else if(eventTypeList.get(position).equals("female"))
+                    {
+                        Model.getSINGLETON().setShowFemaleEvents(isChecked);
+                    }
+                    else if(eventTypeList.get(position).equals("paternal"))
+                    {
+                        Model.getSINGLETON().setShowPaternalEvents(isChecked);
+                    }
+                    else if(eventTypeList.get(position).equals("maternal"))
+                    {
+                        Model.getSINGLETON().setShowMaternalEvents(isChecked);
+                    }
                 }
             }
         });

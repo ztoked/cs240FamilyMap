@@ -2,6 +2,9 @@ package edu.cs240.byu.familymap.main.modelPackage;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by zachhalvorsen on 3/21/16.
  */

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title = "Back"
+        android:id="@+id/back_button"
+        android:icon="@android:drawable/ic_menu_revert"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:title = "go_to_top"
+        android:id="@+id/go_to_top"
+        android:icon="@android:drawable/ic_menu_upload"
+        app:showAsAction="ifRoom"/>
+</menu>

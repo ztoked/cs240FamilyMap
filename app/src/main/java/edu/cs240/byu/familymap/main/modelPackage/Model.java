@@ -8,9 +8,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,22 +46,28 @@ public class Model
     Settings Activity(267)
     Search Activity(127) / Search Recycler Adapter(77)
     Filter Activity(122) / Filter Recycler Adapter(139)
-
  */
 
     LoginInfo login;
     String authCode;
     Person user;
+    String userPersonID;
     Map<String, Person> people;
-    Map<String, Set<Event>> personEvents;
+    Map<String, Set<String>> personEvents;
     Map<String, Event> events;
     Map<String, Float> eventColors;
-    Map<String, Set<String>> FamilyTree;
+    Map<String, List<String>> FamilyTree;
     Set<String> MaternalAncestors;
     Set<String> PaternalAncestors;
     Settings settings;
     Set<String> filter; //Set of event descriptions
     Set<String> eventTypes; //Set that holds all event descriptions
+    Person chosenPerson;
+    Event chosenEvent;
+    boolean showMaleEvents = true;
+    boolean showFemaleEvents = true;
+    boolean showPaternalEvents = true;
+    boolean showMaternalEvents = true;
 
 
     Model()
@@ -74,6 +82,16 @@ public class Model
         settings = new Settings();
         filter = new HashSet<>();
         eventTypes = new HashSet<>();
+    }
+
+    public String getUserPersonID()
+    {
+        return userPersonID;
+    }
+
+    public void setUserPersonID(String userPersonID)
+    {
+        this.userPersonID = userPersonID;
     }
 
     public static Model getSINGLETON()
@@ -126,12 +144,12 @@ public class Model
         this.people = people;
     }
 
-    public Map<String, Set<Event>> getPersonEvents()
+    public Map<String, Set<String>> getPersonEvents()
     {
         return personEvents;
     }
 
-    public void setPersonEvents(Map<String, Set<Event>> personEvents)
+    public void setPersonEvents(Map<String, Set<String>> personEvents)
     {
         this.personEvents = personEvents;
     }
@@ -146,12 +164,12 @@ public class Model
         this.events = events;
     }
 
-    public Map<String, Set<String>> getFamilyTree()
+    public Map<String, List<String>> getFamilyTree()
     {
         return FamilyTree;
     }
 
-    public void setFamilyTree(Map<String, Set<String>> familyTree)
+    public void setFamilyTree(Map<String, List<String>> familyTree)
     {
         FamilyTree = familyTree;
     }
@@ -216,6 +234,66 @@ public class Model
         this.eventTypes = eventTypes;
     }
 
+    public Person getChosenPerson()
+    {
+        return chosenPerson;
+    }
+
+    public void setChosenPerson(Person chosenPerson)
+    {
+        this.chosenPerson = chosenPerson;
+    }
+
+    public Event getChosenEvent()
+    {
+        return chosenEvent;
+    }
+
+    public void setChosenEvent(Event chosenEvent)
+    {
+        this.chosenEvent = chosenEvent;
+    }
+
+    public boolean getShowMaleEvents()
+    {
+        return showMaleEvents;
+    }
+
+    public void setShowMaleEvents(boolean showMaleEvents)
+    {
+        this.showMaleEvents = showMaleEvents;
+    }
+
+    public boolean getShowFemaleEvents()
+    {
+        return showFemaleEvents;
+    }
+
+    public void setShowFemaleEvents(boolean showFemaleEvents)
+    {
+        this.showFemaleEvents = showFemaleEvents;
+    }
+
+    public boolean getShowPaternalEvents()
+    {
+        return showPaternalEvents;
+    }
+
+    public void setShowPaternalEvents(boolean showPaternalEvents)
+    {
+        this.showPaternalEvents = showPaternalEvents;
+    }
+
+    public boolean getShowMaternalEvents()
+    {
+        return showMaternalEvents;
+    }
+
+    public void setShowMaternalEvents(boolean showMaternalEvents)
+    {
+        this.showMaternalEvents = showMaternalEvents;
+    }
+
     public Event getSelectedEvent(Marker marker)
     {
         LatLng position = marker.getPosition();
@@ -234,63 +312,68 @@ public class Model
 
     public void populateFamily()
     {
-        Iterator<String> it = people.keySet().iterator();
-        while (it.hasNext())
+        makeUserYoungestMember();
+        if(!user.getMotherID().equals(""))
         {
-            String personID = it.next();
-            populateHelper(personID, personID);
+            MaternalAncestors.add(user.getMotherID());
+            populateUsersSides(user.getMotherID(), MaternalAncestors);
         }
-        MaternalAncestors.add(user.getMotherID());
-        populateUsersSides(user.getMotherID(), MaternalAncestors);
-        MaternalAncestors.add(user.getFatherID());
-        populateUsersSides(user.getFatherID(), PaternalAncestors);
-    }
-
-    private void populateHelper(String originalPerson, String personID)
-    {
-        if(personID == null || !people.containsKey(personID))
+        if(!user.getFatherID().equals(""))
         {
-            return;
-        }
-        if(!FamilyTree.containsKey(personID))
-        {
-            FamilyTree.put(personID, new HashSet<String>());
-        }
-        //Log.d("personID = ", personID);
-        if(people.get(personID).getFatherID() != null)
-        {
-            String father = people.get(personID).getFatherID();
-            FamilyTree.get(originalPerson).add(father);
-            populateHelper(originalPerson, father);
-        }
-
-        if(people.get(personID).getMotherID() != null)
-        {
-            String mother = people.get(personID).getMotherID();
-            FamilyTree.get(originalPerson).add(mother);
-            populateHelper(originalPerson, mother);
+            MaternalAncestors.add(user.getFatherID());
+            populateUsersSides(user.getFatherID(), PaternalAncestors);
         }
     }
 
     private void populateUsersSides(String personID, Set<String> ancestors)
     {
-        if(personID == null || !people.containsKey(personID))
-        {
-            return;
-        }
-
-        if(people.get(personID).getFatherID() != null)
+        if(!people.get(personID).getFatherID().equals(""))
         {
             String father = people.get(personID).getFatherID();
             ancestors.add(father);
             populateUsersSides(father, ancestors);
         }
-        //Log.d("populateUsersSides", "finished some fathers");
-        if(people.get(personID).getMotherID() != null)
+        if(!people.get(personID).getMotherID().equals(""))
         {
             String mother = people.get(personID).getMotherID();
             ancestors.add(mother);
             populateUsersSides(mother, ancestors);
         }
+    }
+
+    private void makeUserYoungestMember()
+    {
+
+    }
+
+    public void orderEvents(String[] arr)
+    {
+        int i, j;
+        String newValue;
+        for (i = 1; i < arr.length; i++)
+        {
+            newValue = arr[i];
+            j = i;
+            while (j > 0 && Integer.parseInt(events.get(arr[j - 1]).getYear()) > Integer.parseInt(events.get(newValue).getYear()))
+            {
+                arr[j] = arr[j - 1];
+                j--;
+            }
+            arr[j] = newValue;
+        }
+    }
+
+    public void clear()
+    {
+        people = new HashMap<>();
+        FamilyTree = new HashMap<>();
+        events = new HashMap<>();
+        personEvents = new HashMap<>();
+        MaternalAncestors = new HashSet<>();
+        PaternalAncestors = new HashSet<>();
+        eventColors = new HashMap<>();
+        settings = new Settings();
+        filter = new HashSet<>();
+        eventTypes = new HashSet<>();
     }
 }

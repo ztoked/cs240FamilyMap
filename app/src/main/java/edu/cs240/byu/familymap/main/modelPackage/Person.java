@@ -1,5 +1,7 @@
 package edu.cs240.byu.familymap.main.modelPackage;
 
+import java.util.Set;
+
 /**
  * Created by zachhalvorsen on 3/21/16.
  */
@@ -106,5 +108,19 @@ public class Person
     public void setSpouseID(String spouseID)
     {
         this.spouseID = spouseID;
+    }
+
+    public Event firstEvent()
+    {
+        Set<String> events = Model.getSINGLETON().getPersonEvents().get(personId);
+        String[] eventArray = new String[events.size()];
+        int i = 0;
+        for (String s : events)
+        {
+            eventArray[i] = s;
+            ++i;
+        }
+        Model.getSINGLETON().orderEvents(eventArray);
+        return Model.getSINGLETON().getEvents().get(eventArray[0]);
     }
 }

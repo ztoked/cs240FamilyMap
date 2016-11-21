@@ -18,6 +18,7 @@ public class Settings
     public final int NORMAL_MAP = 0;
     public final int SATELITE_MAP = 1;
     public final int HYBRID_MAP = 2;
+    public final int TERRAIN_MAP = 3;
 
 
     public Settings()
@@ -76,6 +77,11 @@ public class Settings
         this.mapType = mapType;
     }
 
+    public String getLifeStoryStringColor()
+    {
+        return getColorFromFloat(lifeStoryColor);
+    }
+
     public float getLifeStoryColor()
     {
         return lifeStoryColor;
@@ -89,6 +95,11 @@ public class Settings
     public float getFamilyTreeColor()
     {
         return familyTreeColor;
+    }
+
+    public String getFamilyTreeStringColor()
+    {
+        return getColorFromFloat(familyTreeColor);
     }
 
     public void setFamilyTreeColor(String color)
@@ -109,6 +120,11 @@ public class Settings
     public float getSpouseLineColor()
     {
         return spouseLineColor;
+    }
+
+    public String getSpouseLineStringColor()
+    {
+        return getColorFromFloat(spouseLineColor);
     }
 
     public void setSpouseLineColor(String color)
@@ -142,8 +158,33 @@ public class Settings
             }
             default:
             {
-                return Color.WHITE;
+                return Color.GREEN;
             }
         }
+    }
+
+    private String getColorFromFloat(float color)
+    {
+        if(color == Color.GREEN)
+        {
+            return "Green";
+        }
+        else if(color == Color.RED)
+        {
+            return "Red";
+        }
+        else if(color == Color.BLUE)
+        {
+            return "Blue";
+        }
+        else if(color == Color.YELLOW)
+        {
+            return "Yellow";
+        }
+        else if(color == Color.MAGENTA)
+        {
+            return "Purple";
+        }
+        return "Green";
     }
 }

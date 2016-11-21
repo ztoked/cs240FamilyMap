@@ -10,4 +10,98 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.cs240.byu.familymap.main.activities.PersonActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="firstname"
+        android:id="@+id/person_firstName"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:textSize="30dp"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FIRST NAME"
+        android:id="@+id/textView11"
+        android:layout_below="@+id/person_firstName"
+        android:layout_alignParentStart="true"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lastname"
+        android:id="@+id/person_lastName"
+        android:layout_below="@+id/textView11"
+        android:layout_alignParentStart="true"
+        android:textSize="30dp"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LAST NAME"
+        android:id="@+id/textView12"
+        android:layout_below="@+id/person_lastName"
+        android:layout_alignParentStart="true"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="gender"
+        android:id="@+id/person_gender"
+        android:layout_below="@+id/textView12"
+        android:layout_alignParentStart="true"
+        android:textSize="30dp"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GENDER"
+        android:id="@+id/textView13"
+        android:layout_below="@+id/person_gender"
+        android:layout_alignParentStart="true"
+        android:textColor="#000000"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SHOW LIFE EVENTS"
+        android:id="@+id/person_lifeEventButton"
+        android:layout_below="@+id/textView13"
+        android:layout_alignParentStart="true"
+        android:textColor="#000000"
+        android:clickable="true"
+        android:button="@android:drawable/btn_radio"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/person_lifeEventRecycler"
+        android:scrollbars="vertical"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/person_lifeEventButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@android:drawable/btn_radio"
+        android:text="SHOW FAMILY MEMBERS"
+        android:id="@+id/person_familyButton"
+        android:layout_below="@+id/person_lifeEventRecycler"
+        android:layout_alignParentStart="true"
+        android:textColor="#000000"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/person_familyRecycler"
+        android:scrollbars="vertical"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/person_familyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>
